@@ -36,19 +36,9 @@ int main( int argc, char** argv )
 		double hu[7];
 		cv::HuMoments(mu, hu); 
 
-		if(compactness < 1.4)
-		{
-			// Draw contour
-			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
-		}
-		else
-		{
-			// Draw contour
-			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, Point() );
-		}
-	
+		// Draw contour
+		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+		drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, Point() );
 	}
 
 	/// Show in a window

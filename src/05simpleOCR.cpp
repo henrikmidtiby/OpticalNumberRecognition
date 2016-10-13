@@ -26,7 +26,7 @@ int main( int argc, char** argv )
 	image = imread("../as.png", 1);
 
 	vector< vector< Point > >contours = findContoursInFile("../as.png");
-
+	
 	// Start random number generator with a known seed
 	RNG rng(12345);
 
@@ -46,25 +46,14 @@ int main( int argc, char** argv )
 		double hu[7];
 		cv::HuMoments(mu, hu); 
 
-		if(compactness < 1.4)
-		{
-			// Draw contour
-			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 2, 8);
-		}
-		else
-		{
-			// Draw contour
-			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 1, 8);
-		}
-	
+		// Draw contour
+		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+		drawContours( drawing, contours, i, color, 1, 8);
 	}
 
 	/// Show in a window
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 	imshow( "Contours", drawing );
-
 
 
 	// Set up training data
@@ -84,9 +73,12 @@ int main( int argc, char** argv )
 	CvSVM SVM;
 	SVM.train(trainingDataMat, labelsMat, Mat(), Mat(), params);
 
+	// Use the SVM
+	float testData[1][2] = { {601, 10} };
+	Mat testDataMat(1, 2, CV_32FC1, testData);
+        float response = SVM.predict(testDataMat);
 
-
-	waitKey(0);
+	printf("Response: %5.3f\n", response);
 
 	return 0;
 }
