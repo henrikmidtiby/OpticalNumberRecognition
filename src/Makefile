@@ -1,2 +1,7 @@
-main:
-	g++ `pkg-config --cflags opencv` main.cpp -o output_file `pkg-config --libs opencv`
+CFLAGS = `pkg-config --cflags opencv`
+LIBS = `pkg-config --libs opencv`
+
+# General rule for building opencv programs
+% : %.cpp
+	g++ $(CFLAGS) -o $@ $< $(LIBS)
+
