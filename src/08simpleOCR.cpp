@@ -46,6 +46,8 @@ std::vector< std::vector <double > > analyzeContours(vector< vector< Point > > c
 		int coordinatex = mu.m10 / mu.m00;
 		int coordinatey = mu.m01 / mu.m00;
 		temp.push_back(objectClass);
+		temp.push_back(coordinatex);
+		temp.push_back(coordinatey);
 		temp.push_back(area);
 		temp.push_back(perimeter);
 		temp.push_back(mu.mu12);
@@ -76,21 +78,20 @@ int main( int argc, char** argv )
 	output = analyzeContours(findContoursInFile("../numbers/8.png"), 8, output);
 	output = analyzeContours(findContoursInFile("../numbers/9.png"), 9, output);
 
-	cv::Mat trainingDataLabels(output.size(), 1, CV_64F);
-	cv::Mat trainingData(output.size(), output.at(0).size() - 1, CV_64F);
+	cv::Mat trainingDataLabels(output.size(), 1, CV_32SC1);
+	cv::Mat trainingData(output.size(), output.at(0).size() - 3, CV_32FC1);
 
 	for (size_t i = 0; i < output.size(); i++)
 	{   
-		trainingDataLabels.at<double>(i, 1) = output[i][0];
-//		printf("%8.3f\t ", output[i][0]);
-	    	for (size_t j = 1; j < output.at(0).size(); j++)
+	//	trainingDataLabels.at<float>(i, 0) = output[i][0];
+		//printf("%8.3f\t ", output[i][0]);
+	    	for (size_t j = 3; j < output.at(0).size(); j++)
 	    	{   
-			trainingData.at<double>(i, j - 1) = output[i][j];
+	//		trainingData.at<float>(i, j - 3) = output[i][j];
 			//printf("%8.3f\t ", output[i][j]);
 	    	}   
 		//printf("\n");
 	}   
-
 
 	// Set up SVM's parameters
 	CvSVMParams params;
@@ -100,20 +101,15 @@ int main( int argc, char** argv )
 	
 	// Train the SVM
 	CvSVM SVM;
-	SVM.train(trainingData, trainingDataLabels, Mat(), Mat(), params);
-
-	// Use the SVM
-	float testData[1][2] = { {601, 10} };
-	Mat testDataMat(1, 2, CV_32FC1, testData);
-        float response = SVM.predict(testDataMat);
-
-	printf("Response: %5.3f\n", response);
-
+	printf("trainingData size: %d x %d\n", trainingData.rows, trainingData.cols);
+	printf("trainingDataLabels size: %d x %d\n", trainingDataLabels.rows, trainingDataLabels.cols);
+	//SVM.train(trainingData, trainingDataLabels, Mat(), Mat(), params);
 
 	Mat image;
-	image = imread("../sudokuer/01.png", 1);
+	image = imread("../sudokuer/01bw.png", CV_LOAD_IMAGE_COLOR);
 
-	vector< vector< Point > >contours = findContoursInFile("../sudokuer/01.png");
+	printf("Locating contours in test image.\n");
+	vector< vector< Point > > contours = findContoursInFile("../sudokuer/01bw.png");
 	
 	// Start random number generator with a known seed
 	RNG rng(12345);
@@ -129,7 +125,7 @@ int main( int argc, char** argv )
 
 		if(area > 0)
 		{
-			printf("perimeter: %8.3f  area: %8.3f   compactness: %8.3f\n", perimeter, area, compactness);
+			//printf("perimeter: %8.3f  area: %8.3f   compactness: %8.3f\n", perimeter, area, compactness);
 
 			/// Get the moments
 			Moments mu;
@@ -139,14 +135,23 @@ int main( int argc, char** argv )
 
 			// Draw contour
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 1, 8);
+			drawContours( image, contours, i, color, 3, 8);
 		}
 	}
+	printf("Training completed.\n");
 	/// Show in a window
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-	imshow( "Contours", drawing );
+	imshow( "Contours", image);
 	
 	waitKey(0);
+
+
+	// Use the SVM
+//	float testData[1][2] = { {601, 10} };
+//	Mat testDataMat(1, 2, CV_32FC1, testData);
+//        float response = SVM.predict(testDataMat);
+
+//	printf("Response: %5.3f\n", response);
 
 
 }
