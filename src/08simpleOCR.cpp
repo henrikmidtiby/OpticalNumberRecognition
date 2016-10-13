@@ -50,8 +50,8 @@ std::vector< std::vector <double > > analyzeContours(vector< vector< Point > > c
 		temp.push_back(coordinatey);
 		temp.push_back(area);
 		temp.push_back(perimeter);
-		temp.push_back(mu.mu12);
-		temp.push_back(mu.mu11);
+		temp.push_back(mu.mu12 / 1000);
+		temp.push_back(mu.mu11 / 1000);
 
 		output.push_back(temp);
 	}
@@ -99,11 +99,13 @@ int main( int argc, char** argv )
 	params.kernel_type = CvSVM::POLY;
 	params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
 	params.degree      = 2;
+	params.coef0       = 2;
 	
 	// Train the SVM
 	CvSVM SVM;
 	printf("trainingData size: %d x %d\n", trainingData.rows, trainingData.cols);
 	printf("trainingDataLabels size: %d x %d\n", trainingDataLabels.rows, trainingDataLabels.cols);
+	//SVM.train_auto(trainingData, trainingDataLabels, Mat(), Mat(), params);
 	SVM.train(trainingData, trainingDataLabels, Mat(), Mat(), params);
 
 	Mat image;
@@ -139,12 +141,10 @@ int main( int argc, char** argv )
 			Mat sampleMat = (Mat_<float>(1, 4) << output[i][3], output[i][4], output[i][5], output[i][6]);
 			float recognizedClass = SVM.predict(sampleMat);
 			printf("%5d, %5d, %2f\n", coordx, coordy, recognizedClass);
-			// Draw contour
-			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			circle(image, Point(coordx, coordy), 10, color, -1);
-			char str[200];
+			// Draw recognized class
+			char str[20];
 			sprintf(str,"%.0f", recognizedClass);
-			putText(image, str, Point2f(coordx, coordy), FONT_HERSHEY_PLAIN, 4,  Scalar(120,120,120));
+			putText(image, str, Point2f(coordx, coordy), FONT_HERSHEY_TRIPLEX, 1,  Scalar(0, 0, 255));
 		}
 	}
 	printf("Training completed.\n");
