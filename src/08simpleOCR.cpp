@@ -7,15 +7,19 @@ vector< vector< Point > > findContoursInFile(std::string filename)
 {
 	Mat image;
 	Mat imageGray;
-	image = imread(filename, 1);
 
-	cvtColor( image, imageGray, CV_BGR2GRAY );
+	image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+	if(!image.data)
+	{
+		printf("Could not open or find the image\n");
+		assert(false);
+	}
 
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 
 	/// Find contours
-	findContours( imageGray, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+	findContours( image, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
 	return contours;
 }
