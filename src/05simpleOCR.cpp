@@ -38,22 +38,27 @@ int main( int argc, char** argv )
 		double perimeter = arcLength(contours[i], 1);
 		double area = contourArea(contours[i], true);
 		double compactness = perimeter * perimeter / (4 * 3.141592 * area);
-		printf("perimeter: %8.3f  area: %8.3f   compactness: %8.3f\n", perimeter, area, compactness);
 
-		/// Get the moments
-		Moments mu;
-		mu = moments(contours[i], false); 
-		double hu[7];
-		cv::HuMoments(mu, hu); 
+		if(area > 0)
+		{
+			printf("perimeter: %8.3f  area: %8.3f   compactness: %8.3f\n", perimeter, area, compactness);
 
-		// Draw contour
-		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-		drawContours( drawing, contours, i, color, 1, 8);
+			/// Get the moments
+			Moments mu;
+			mu = moments(contours[i], false); 
+			double hu[7];
+			cv::HuMoments(mu, hu); 
+
+			// Draw contour
+			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+			drawContours( drawing, contours, i, color, 1, 8);
+		}
 	}
-
 	/// Show in a window
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 	imshow( "Contours", drawing );
+	
+	waitKey(0);
 
 
 	// Set up training data
