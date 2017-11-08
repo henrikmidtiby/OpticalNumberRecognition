@@ -13,8 +13,8 @@ int main( int argc, char** argv )
 
 
 	Mat canny_output;
-	vector<vector<Point> > contours;
-	vector<Vec4i> hierarchy;
+	std::vector<std::vector<Point> > contours;
+	std::vector<Vec4i> hierarchy;
 
 	/// Detect edges using canny
 	int thresh = 100;

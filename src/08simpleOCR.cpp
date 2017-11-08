@@ -3,7 +3,7 @@
 
 using namespace cv;
 
-vector< vector< Point > > findContoursInFile(std::string filename)
+std::vector< std::vector< Point > > findContoursInFile(std::string filename)
 {
 	Mat image;
 	Mat imageGray;
@@ -15,8 +15,8 @@ vector< vector< Point > > findContoursInFile(std::string filename)
 		assert(false);
 	}
 
-	vector<vector<Point> > contours;
-	vector<Vec4i> hierarchy;
+	std::vector<std::vector<Point> > contours;
+	std::vector<Vec4i> hierarchy;
 
 	/// Find contours
 	findContours( image, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
@@ -24,7 +24,7 @@ vector< vector< Point > > findContoursInFile(std::string filename)
 	return contours;
 }
 
-std::vector< std::vector <double > > analyzeContours(vector< vector< Point > > contours, int objectClass, std::vector< std::vector <double > > output)
+std::vector< std::vector <double > > analyzeContours(std::vector< std::vector< Point > > contours, int objectClass, std::vector< std::vector <double > > output)
 {
 	for( int i = 0; i< contours.size(); i++ )
 	{
@@ -58,7 +58,7 @@ std::vector< std::vector <double > > analyzeContours(vector< vector< Point > > c
 	return output;
 }
 
-std::vector< std::vector <double > > analyzeContours(vector< vector< Point > > contours, int objectClass)
+std::vector< std::vector <double > > analyzeContours(std::vector< std::vector< Point > > contours, int objectClass)
 {
 	std::vector< std::vector <double > > output;
 
@@ -112,7 +112,7 @@ int main( int argc, char** argv )
 	image = imread("../sudokuer/01bw.png", CV_LOAD_IMAGE_COLOR);
 
 	printf("Locating contours in test image.\n");
-	vector< vector< Point > > contours = findContoursInFile("../sudokuer/01bw.png");
+	std::vector< std::vector< Point > > contours = findContoursInFile("../sudokuer/01bw.png");
 
 	output = analyzeContours(contours, 1);
 

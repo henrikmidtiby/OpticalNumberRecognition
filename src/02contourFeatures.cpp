@@ -11,8 +11,8 @@ int main( int argc, char** argv )
 
 	cvtColor( image, imageGray, CV_BGR2GRAY );
 
-	vector<vector<Point> > contours;
-	vector<Vec4i> hierarchy;
+	std::vector<std::vector<Point> > contours;
+	std::vector<Vec4i> hierarchy;
 
 	/// Find contours
 	findContours( imageGray, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
