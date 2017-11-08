@@ -1,4 +1,5 @@
-CFLAGS = `pkg-config --cflags opencv`
+
+FLAGS = `pkg-config --cflags opencv`
 LIBS = `pkg-config --libs opencv`
 
 # General rule for building opencv programs
