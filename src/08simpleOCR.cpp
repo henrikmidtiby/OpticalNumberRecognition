@@ -126,8 +126,11 @@ int main( int argc, char** argv )
 	// Start random number generator with a known seed
 	RNG rng(12345);
 
+	// Fade image
+	Mat detected_numbers;
+	addWeighted(image, 1.0, image, 0.0, 200, detected_numbers);
+
 	/// Draw contours
-	Mat drawing = Mat::zeros( image.size(), CV_8UC3 );
 	for( int i = 0; i < output.size(); i++ )
 	{
 		float area = output[i][3];
@@ -141,13 +144,23 @@ int main( int argc, char** argv )
 			// Draw recognized class
 			char str[20];
 			sprintf(str,"%.0f", recognizedClass);
-			putText(image, str, Point2f(coordx, coordy), FONT_HERSHEY_TRIPLEX, 1,  Scalar(0, 0, 255));
+			putText(detected_numbers, str, Point2f(coordx - 20, coordy + 20), FONT_HERSHEY_TRIPLEX, 2,  Scalar(0, 0, 0));
 		}
 	}
+
+	int dilation_type = cv::MORPH_CROSS;
+	int dilation_size = 1;
+	Mat element = getStructuringElement( dilation_type,
+                       Size( 2*dilation_size + 1, 2*dilation_size+1 ),
+                       Point( dilation_size, dilation_size ) );
+	erode( detected_numbers, detected_numbers, element );
+
 	printf("Training completed.\n");
 	/// Show in a window
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 	imshow( "Contours", image);
+	namedWindow( "Detected numbers", CV_WINDOW_AUTOSIZE );
+	imshow( "Detected numbers", detected_numbers);
 	
 	waitKey(0);
 }
