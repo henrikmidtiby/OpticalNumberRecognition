@@ -93,20 +93,17 @@ int main( int argc, char** argv )
 
 	std::cout << "trainingData = "<< std::endl << " "  << trainingData << std::endl << std::endl;
 
-	// Set up SVM's parameters
-	CvSVMParams params;
-	params.svm_type= CvSVM::C_SVC;
-	params.kernel_type = CvSVM::POLY;
-	params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
-	params.degree      = 2;
-	params.coef0       = 2;
-	
 	// Train the SVM
-	CvSVM SVM;
 	printf("trainingData size: %d x %d\n", trainingData.rows, trainingData.cols);
 	printf("trainingDataLabels size: %d x %d\n", trainingDataLabels.rows, trainingDataLabels.cols);
-	//SVM.train_auto(trainingData, trainingDataLabels, Mat(), Mat(), params);
-	SVM.train(trainingData, trainingDataLabels, Mat(), Mat(), params);
+
+	cv::ml::SVM* svm = cv::ml::SVM::create();
+	svm->setType(cv::ml::SVM::C_SVC);
+	svm->setKernel(cv::ml::SVM::POLY);
+	svm->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
+	svm->setDegree(2);
+	svm->setCoef0(2);
+	svm->train(trainingData, cv::ml::ROW_SAMPLE, trainingDataLabels);
 
 	Mat image;
 	image = imread("../sudokuer/01bw.png", CV_LOAD_IMAGE_COLOR);
@@ -139,7 +136,7 @@ int main( int argc, char** argv )
 			int coordx = output[i][1];
 			int coordy = output[i][2];
 			Mat sampleMat = (Mat_<float>(1, 4) << output[i][3], output[i][4], output[i][5], output[i][6]);
-			float recognizedClass = SVM.predict(sampleMat);
+			float recognizedClass = svm->predict(sampleMat);
 			printf("%5d, %5d, %2f\n", coordx, coordy, recognizedClass);
 			// Draw recognized class
 			char str[20];
