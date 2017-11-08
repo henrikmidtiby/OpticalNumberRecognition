@@ -58,18 +58,18 @@ int main( int argc, char** argv )
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 	imshow( "Contours", drawing );
 	
-	waitKey(0);
-
+	waitKey(10);
 
 	// Set up training data
-	float labels[4] = {1.0, -1.0, -1.0, -1.0};
-	Mat labelsMat(4, 1, CV_32FC1, labels);
+	int labels[4] = {1, -1, -1, -1};
+	Mat labelsMat(4, 1, CV_32S, labels);
 	
 	float trainingData[4][2] = { {501, 10}, {255, 10}, {501, 255}, {10, 501} };
-	Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
+	// Training data should be floats
+	Mat trainingDataMat(4, 2, CV_32F, trainingData);
 	
 	// Train the SVM
-	cv::ml::SVM* svm = cv::ml::SVM::create();
+	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 	svm->setType(cv::ml::SVM::C_SVC);
 	svm->setKernel(cv::ml::SVM::LINEAR);
 	svm->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
@@ -77,7 +77,7 @@ int main( int argc, char** argv )
 
 	// Use the SVM
 	float testData[1][2] = { {601, 10} };
-	Mat testDataMat(1, 2, CV_32FC1, testData);
+	Mat testDataMat(1, 2, CV_32F, testData);
         float response = svm->predict(testDataMat);
 
 	printf("Response: %5.3f\n", response);

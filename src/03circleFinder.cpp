@@ -34,7 +34,7 @@ int main( int argc, char** argv )
 		{
 			// Draw contour
 			Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-			drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+			drawContours( drawing, contours, i, color, 4, 8, hierarchy, 0, Point() );
 		}
 		else
 		{

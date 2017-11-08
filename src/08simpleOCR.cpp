@@ -79,12 +79,12 @@ int main( int argc, char** argv )
 	output = analyzeContours(findContoursInFile("../numbers/8.png"), 8, output);
 	output = analyzeContours(findContoursInFile("../numbers/9.png"), 9, output);
 
-	cv::Mat trainingDataLabels(output.size(), 1, CV_32FC1);
-	cv::Mat trainingData(output.size(), output.at(0).size() - 3, CV_32FC1);
+	cv::Mat trainingDataLabels(output.size(), 1, CV_32S);
+	cv::Mat trainingData(output.size(), output.at(0).size() - 3, CV_32F);
 
 	for (size_t i = 0; i < output.size(); i++)
 	{   
-		trainingDataLabels.at<float>(i, 0) = output[i][0];
+		trainingDataLabels.at<int>(i, 0) = output[i][0];
 	    	for (size_t j = 3; j < output.at(0).size(); j++)
 	    	{   
 			trainingData.at<float>(i, j - 3) = output[i][j];
@@ -97,7 +97,7 @@ int main( int argc, char** argv )
 	printf("trainingData size: %d x %d\n", trainingData.rows, trainingData.cols);
 	printf("trainingDataLabels size: %d x %d\n", trainingDataLabels.rows, trainingDataLabels.cols);
 
-	cv::ml::SVM* svm = cv::ml::SVM::create();
+	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 	svm->setType(cv::ml::SVM::C_SVC);
 	svm->setKernel(cv::ml::SVM::POLY);
 	svm->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
@@ -114,7 +114,7 @@ int main( int argc, char** argv )
 	output = analyzeContours(contours, 1);
 
 	// Get feature descriptors.
-	cv::Mat objectData(output.size(), output.at(0).size() - 3, CV_32FC1);
+	cv::Mat objectData(output.size(), output.at(0).size() - 3, CV_32F);
 	for (size_t i = 0; i < output.size(); i++)
 	{   
 	    	for (size_t j = 3; j < output.at(0).size(); j++)
