@@ -1,5 +1,6 @@
 CFLAGS = `pkg-config --cflags opencv`
 LIBS = `pkg-config --libs opencv`
+# Change 'opencv' to 'opencv-3.2.0-dev' for making it work with opencv from ROS.
 
 # General rule for building opencv programs
 % : %.cpp
