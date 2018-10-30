@@ -7,7 +7,7 @@ LIBS = `pkg-config --libs opencv`
 	g++ $(CFLAGS) -o $@ $< $(LIBS)
 
 
-all: 01locateContours 02contourFeatures 03circleFinder 04huMoments 05simpleOCR 06digitFeatures 07featureCollections 08simpleOCR
+all: 01locateContours 02contourFeatures 03circleFinder 04huMoments 05simpleOCR 06digitFeatures 07featureCollections 08simpleOCR 09sudokuExtracter
 
 clean:
 	rm -f 01locateContours 02contourFeatures 03circleFinder 04huMoments 05simpleOCR 06digitFeatures 07featureCollections 08simpleOCR
