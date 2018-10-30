@@ -266,24 +266,51 @@ int main( int argc, char** argv )
 		line(detected_numbers, Point2f(0, coordx), Point2f(800, coordx), Scalar(0, 0, 0));
 	}
 	
-
-	/// Draw contours
+    	// Store values in a sudoku grid
+	int sud[N*N][N*N] = { { EMPTY } };
 	for( int i = 0; i < output.size(); i++ )
 	{
 		float area = output[i][3];
 		if(area > 400)
 		{
-			int coordx = output[i][1];
-			int coordy = output[i][2];
+			int sudoku_coord_x = output[i][1] / spacing;
+			int sudoku_coord_y = output[i][2] / spacing;
 			Mat sampleMat = (Mat_<float>(1, 4) << output[i][3], output[i][4], output[i][5], output[i][6]);
 			float recognizedClass = svm->predict(sampleMat);
-			printf("%5d, %5d, %2f\n", coordx, coordy, recognizedClass);
-			// Draw recognized class
-			char str[20];
-			sprintf(str,"%.0f", recognizedClass);
-			putText(detected_numbers, str, Point2f(coordx - 20, coordy + 20), FONT_HERSHEY_TRIPLEX, 2,  Scalar(0, 0, 0));
+			sud[sudoku_coord_x][sudoku_coord_y] = (int) recognizedClass;
+		}
+	}
 
-			printf("%d %d %d\n", coordx, coordy, recognizedClass);
+	// print_sud(sud);
+
+	int sud_solved[N*N][N*N] = { { EMPTY } };
+	for(int i = 0; i < N*N; i++)
+	{
+		for(int j = 0; j < N*N; j++)
+		{
+			sud_solved[i][j] = sud[i][j];
+		}
+	}
+
+	fill_sud(sud_solved, 0, 0);
+	// print_sud(sud_solved);
+	
+	for(int i = 0; i < N*N; i++)
+	{
+		for(int j = 0; j < N*N; j++)
+		{
+			int coord_x = (i + 0.5) * spacing - 20;
+			int coord_y = (j + 0.5) * spacing + 22;
+			char str[20];
+			sprintf(str,"%d", sud_solved[i][j]);
+			if(sud[i][j] == 0)
+			{
+				putText(detected_numbers, str, Point2f(coord_x, coord_y), FONT_HERSHEY_TRIPLEX, 2,  Scalar(0, 0, 255));
+			}
+			else
+			{
+				putText(detected_numbers, str, Point2f(coord_x, coord_y), FONT_HERSHEY_TRIPLEX, 2,  Scalar(0, 0, 0));
+			}
 		}
 	}
 
@@ -298,8 +325,8 @@ int main( int argc, char** argv )
 	/// Show in a window
 	namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 	imshow( "Contours", image);
-	namedWindow( "Detected numbers", CV_WINDOW_AUTOSIZE );
-	imshow( "Detected numbers", detected_numbers);
+	namedWindow( "Solved sudoku", CV_WINDOW_AUTOSIZE );
+	imshow( "Solved sudoku", detected_numbers);
 	
 	waitKey(0);
 }
